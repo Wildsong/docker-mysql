@@ -1,0 +1,30 @@
+volumes:
+  db:
+    # The database engine will keep its data in a Docker volume called "sql-data".
+    # We want it to live forever so we declare it "external".
+    name: sql-data
+    external: true
+
+networks:
+  database:
+    # We want the database called "database" not some weird thing like "mysql-database-1".
+    # We want it to live forever so we declare it "external".
+    name: database
+    external: true
+    
+services:
+  database:
+    image: mysql:latest
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "true"
+    volumes:
+      - db:/var/lib/mysql
+    ports:
+      - 3306:3306
+    restart: always
+    
+    networks:
+      database:
+        aliases:
+          # This database engine will call itself mysql on the "database" network.
+          - mysql
